@@ -3,6 +3,7 @@ import {
   View, Image, Text, StyleSheet,
 } from 'react-native';
 import PropTypes from 'prop-types';
+import { formatCurrency, calculateFiatBalance } from '../shared/helpers/CurrencyHelper';
 
 const CurrencyListItem = ({
   imageSrc, currencyName, currencyPrice, currencyBalance, fiatBalance,
@@ -21,16 +22,15 @@ const CurrencyListItem = ({
         >
           {currencyName}
         </Text>
-        {currencyPrice
-                && (
-                <Text
-                  style={styles.secondaryText}
-                >
-                  {currencyPrice}
-                </Text>
-                )}
+        { currencyPrice !== undefined
+            && (
+              <Text
+                style={styles.secondaryText}
+              >
+                {`${formatCurrency(currencyPrice)}`}
+              </Text>
+            )}
       </View>
-
       <View
         style={styles.currentBalanceContainer}
       >
@@ -39,30 +39,30 @@ const CurrencyListItem = ({
         >
           {currencyBalance}
         </Text>
-        {fiatBalance
-                && (
-                <Text
-                  style={styles.secondaryText}
-                >
-                  {fiatBalance}
-                </Text>
-                )}
+        { fiatBalance !== undefined
+            && (
+            <Text
+              style={styles.secondaryText}
+            >
+              {`${formatCurrency(calculateFiatBalance(currencyPrice, fiatBalance))}`}
+            </Text>
+            )}
       </View>
     </View>
   </View>
 );
 
 CurrencyListItem.propTypes = {
-  imageSrc: PropTypes.string.isRequired,
+  imageSrc: PropTypes.number.isRequired,
   currencyName: PropTypes.string.isRequired,
-  currencyPrice: PropTypes.string,
+  currencyPrice: PropTypes.number,
   currencyBalance: PropTypes.string.isRequired,
-  fiatBalance: PropTypes.string,
+  fiatBalance: PropTypes.number,
 };
 
 CurrencyListItem.defaultProps = {
-  currencyPrice: '',
-  fiatBalance: '',
+  currencyPrice: undefined,
+  fiatBalance: undefined,
 };
 
 const styles = StyleSheet.create({

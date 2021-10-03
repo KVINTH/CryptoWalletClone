@@ -1,6 +1,6 @@
 import { StatusBar } from 'expo-status-bar';
 import AppLoading from 'expo-app-loading';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   StyleSheet, View, Image, Platform,
 } from 'react-native';
@@ -12,13 +12,32 @@ import CurrencyListItem from './components/CurrencyListItem';
 import canadaLogo from './assets/canada_logo.png';
 import bitcoinLogo from './assets/bitcoin_logo.png';
 import ethereumLogo from './assets/ethereum_logo.png';
+import { formatCurrency, calculateFiatBalance } from './shared/helpers/CurrencyHelper';
+import { getCurrencyInfo } from './shared/apis/CryptocurrencyApi';
 
 export default function App() {
   const [fontsLoaded] = useFonts({
     Shanti_400Regular,
   });
+  const [isLoading, setLoading] = useState(true);
+  const [currencyInfo, setCurrencyInfo] = useState({});
 
-  if (!fontsLoaded) {
+  async function getCurrencyInfoFromApi() {
+    try {
+      const data = await getCurrencyInfo();
+      setCurrencyInfo(data);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  useEffect(() => {
+    getCurrencyInfoFromApi();
+  }, []);
+
+  if (!fontsLoaded || isLoading) {
     return <AppLoading />;
   }
   return (
@@ -53,16 +72,16 @@ export default function App() {
       <CurrencyListItem
         imageSrc={bitcoinLogo}
         currencyName="Bitcoin"
-        currencyPrice="$60,458.66"
+        currencyPrice={currencyInfo.bitcoin.usd}
         currencyBalance="0.1002"
-        fiatBalance="$6,059.85"
+        fiatBalance={0.1002}
       />
       <CurrencyListItem
         imageSrc={ethereumLogo}
         currencyName="Ethereum"
-        currencyPrice="$4,155.51"
+        currencyPrice={currencyInfo.ethereum.usd}
         currencyBalance="1.00"
-        fiatBalance="$4,155.60"
+        fiatBalance={1.00}
       />
     </View>
   );

@@ -10,7 +10,7 @@ const CurrentBalance = ({ style }) => (
 );
 
 CurrentBalance.propTypes = {
-  style: PropTypes.objectOf(PropTypes.object()),
+  style: PropTypes.object,
 };
 
 CurrentBalance.defaultProps = {
