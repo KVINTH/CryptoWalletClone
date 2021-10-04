@@ -1,25 +1,27 @@
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
-import PropTypes from 'prop-types';
+import PropType from 'prop-types';
 
-const CurrentBalance = ({ style }) => (
-  <View style={[style, styles.currentBalanceContainer]}>
+const CurrentBalance = ({ balance }) => (
+  <View style={styles.currentBalanceContainer}>
     <Text style={styles.currencySymbol}>$</Text>
-    <Text style={styles.currentBalance}>10,220.45</Text>
+    <Text style={styles.currentBalance}>{balance}</Text>
   </View>
 );
 
 CurrentBalance.propTypes = {
-  style: PropTypes.object,
+  balance: PropType.number,
 };
 
 CurrentBalance.defaultProps = {
-  style: '',
+  balance: 0,
 };
 
 const styles = StyleSheet.create({
   currentBalanceContainer: {
     flexDirection: 'row',
+    paddingTop: 30,
+    paddingBottom: 30,
   },
   currencySymbol: {
     fontSize: 24,

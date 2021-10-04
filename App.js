@@ -1,31 +1,23 @@
-import { StatusBar } from 'expo-status-bar';
 import AppLoading from 'expo-app-loading';
 import React, { useEffect, useState } from 'react';
-import {
-  StyleSheet, View, Image, Platform,
-} from 'react-native';
+import { StyleSheet, View, Platform } from 'react-native';
 import { useFonts, Shanti_400Regular } from '@expo-google-fonts/shanti';
-import CurrentBalance from './components/CurrentBalance';
-import Button from './components/Button';
-import { Divider } from './components/Divider';
-import CurrencyListItem from './components/CurrencyListItem';
-import canadaLogo from './assets/canada_logo.png';
-import bitcoinLogo from './assets/bitcoin_logo.png';
-import ethereumLogo from './assets/ethereum_logo.png';
-import { formatCurrency, calculateFiatBalance } from './shared/helpers/CurrencyHelper';
-import { getCurrencyInfo } from './shared/apis/CryptocurrencyApi';
+import { StatusBar } from 'expo-status-bar';
+import WalletScreen from './screens/WalletScreen';
+import { getUserInfo } from './shared/apis/UserApi';
 
 export default function App() {
+  const [isLoading, setLoading] = useState(true);
+  const [userInfo, setUserInfo] = useState({});
   const [fontsLoaded] = useFonts({
     Shanti_400Regular,
   });
-  const [isLoading, setLoading] = useState(true);
-  const [currencyInfo, setCurrencyInfo] = useState({});
 
-  async function getCurrencyInfoFromApi() {
+  async function getUserInfoFromApi() {
     try {
-      const data = await getCurrencyInfo();
-      setCurrencyInfo(data);
+      const data = await getUserInfo(1);
+      setUserInfo(data);
+      console.log(data);
     } catch (error) {
       console.error(error);
     } finally {
@@ -34,7 +26,7 @@ export default function App() {
   }
 
   useEffect(() => {
-    getCurrencyInfoFromApi();
+    getUserInfoFromApi();
   }, []);
 
   if (!fontsLoaded || isLoading) {
@@ -42,56 +34,18 @@ export default function App() {
   }
   return (
     <View style={styles.container}>
-      <Image
-        source={{
-          uri: 'https://reactnative.dev/docs/assets/p_cat2.png',
-        }}
-        style={{ width: 50, height: 50 }}
+      <WalletScreen
+        user={userInfo}
       />
-      <CurrentBalance
-        style={styles.currentBalance}
-      />
-      <View
-        style={styles.buttonContainer}
-      >
-        <Button
-          iconName="md-arrow-down"
-          text="Add Funds"
-        />
-        <Button
-          iconName="md-arrow-up"
-          text="Send"
-        />
-      </View>
-      <Divider />
-      <CurrencyListItem
-        imageSrc={canadaLogo}
-        currencyName="Dollars"
-        currencyBalance="5.00"
-      />
-      <CurrencyListItem
-        imageSrc={bitcoinLogo}
-        currencyName="Bitcoin"
-        currencyPrice={currencyInfo.bitcoin.usd}
-        currencyBalance="0.1002"
-        fiatBalance={0.1002}
-      />
-      <CurrencyListItem
-        imageSrc={ethereumLogo}
-        currencyName="Ethereum"
-        currencyPrice={currencyInfo.ethereum.usd}
-        currencyBalance="1.00"
-        fiatBalance={1.00}
-      />
+      <StatusBar />
     </View>
+
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
     paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
   },
   buttonContainer: {

@@ -1,0 +1,28 @@
+{
+  "users": [
+    {
+      "id": 1,
+      "username": "kainth",
+      "wallets": [
+        {
+          "id": 1,
+          "currency": "Dollars",
+          "currencyCode": "CAD",
+          "balance": 5000
+        },
+        {
+          "id": 2,
+          "currency": "Bitcoin",
+          "currencyCode": "BTC",
+          "balance": 1.23105
+        },
+        {
+          "id": 3,
+          "currency": "Ethereum",
+          "currencyCode": "ETH",
+          "balance": 1.002
+        }
+      ]
+    }
+  ]
+}

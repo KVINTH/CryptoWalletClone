@@ -1,12 +1,14 @@
 import React from 'react';
 import {
-  View, Image, Text, StyleSheet,
+  View, Image, StyleSheet,
 } from 'react-native';
 import PropTypes from 'prop-types';
 import { formatCurrency, calculateFiatBalance } from '../shared/helpers/CurrencyHelper';
+import CurrencyListItemPrimaryText from './CurrencyList/CurrencyListItemPrimaryText';
+import CurrencyListItemSecondaryText from './CurrencyList/CurrencyListItemSecondaryText';
 
 const CurrencyListItem = ({
-  imageSrc, currencyName, currencyPrice, currencyBalance, fiatBalance,
+  imageSrc, currencyName, currencyPrice, currencyBalance,
 }) => (
   <View style={styles.container}>
     <Image
@@ -17,35 +19,30 @@ const CurrencyListItem = ({
       style={styles.innerContainer}
     >
       <View>
-        <Text
-          style={styles.primaryText}
-        >
+        <CurrencyListItemPrimaryText>
           {currencyName}
-        </Text>
+        </CurrencyListItemPrimaryText>
         { currencyPrice !== undefined
             && (
-              <Text
-                style={styles.secondaryText}
-              >
+              <CurrencyListItemSecondaryText>
                 {`${formatCurrency(currencyPrice)}`}
-              </Text>
+              </CurrencyListItemSecondaryText>
             )}
       </View>
       <View
         style={styles.currentBalanceContainer}
       >
-        <Text
-          style={styles.primaryText}
-        >
-          {currencyBalance}
-        </Text>
-        { fiatBalance !== undefined
+        <CurrencyListItemPrimaryText>
+          {currencyBalance.toLocaleString('en-US', {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 4,
+          })}
+        </CurrencyListItemPrimaryText>
+        { currencyPrice !== undefined && currencyBalance !== undefined
             && (
-            <Text
-              style={styles.secondaryText}
-            >
-              {`${formatCurrency(calculateFiatBalance(currencyPrice, fiatBalance))}`}
-            </Text>
+            <CurrencyListItemSecondaryText>
+              {`${formatCurrency(calculateFiatBalance(currencyPrice, currencyBalance))}`}
+            </CurrencyListItemSecondaryText>
             )}
       </View>
     </View>
@@ -56,13 +53,11 @@ CurrencyListItem.propTypes = {
   imageSrc: PropTypes.number.isRequired,
   currencyName: PropTypes.string.isRequired,
   currencyPrice: PropTypes.number,
-  currencyBalance: PropTypes.string.isRequired,
-  fiatBalance: PropTypes.number,
+  currencyBalance: PropTypes.number.isRequired,
 };
 
 CurrencyListItem.defaultProps = {
   currencyPrice: undefined,
-  fiatBalance: undefined,
 };
 
 const styles = StyleSheet.create({
@@ -86,13 +81,6 @@ const styles = StyleSheet.create({
   },
   currentBalanceContainer: {
     alignItems: 'flex-end',
-  },
-  primaryText: {
-    fontSize: 24,
-  },
-  secondaryText: {
-    fontSize: 18,
-    color: 'gray',
   },
 });
 export default CurrencyListItem;
