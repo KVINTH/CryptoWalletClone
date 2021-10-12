@@ -1,9 +1,12 @@
-/* eslint-disable global-require */
+import canadaLogo from './canada_logo.png';
+import bitcoinLogo from './bitcoin_logo.png';
+import ethereumLogo from './ethereum_logo.png';
+
 const images = {
   currencies: {
-    dollars: require('./canada_logo.png'),
-    bitcoin: require('./bitcoin_logo.png'),
-    ethereum: require('./ethereum_logo.png'),
+    dollars: canadaLogo,
+    bitcoin: bitcoinLogo,
+    ethereum: ethereumLogo,
   },
 };
 
