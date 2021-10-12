@@ -1,35 +1,35 @@
 import React, { useEffect, useState } from 'react';
-import { Image, StyleSheet, View } from 'react-native';
+import {
+  FlatList, Image, StyleSheet, View,
+} from 'react-native';
 import AppLoading from 'expo-app-loading';
 import PropTypes from 'prop-types';
 import CurrentBalance from '../components/CurrentBalance';
 import Button from '../components/Button';
 import CurrencyListItem from '../components/CurrencyListItem';
 import Divider from '../components/Divider';
-import canadaLogo from '../assets/canada_logo.png';
-import bitcoinLogo from '../assets/bitcoin_logo.png';
-import ethereumLogo from '../assets/ethereum_logo.png';
+import Images from '../assets/index';
 import { getCurrencyInfo } from '../shared/apis/CryptocurrencyApi';
 import { calculateFiatBalance } from '../shared/helpers/CurrencyHelper';
 
 const WalletScreen = ({ user }) => {
   const [isLoading, setLoading] = useState(true);
+  const [isRefreshing, setIsRefreshing] = useState(false);
   const [currencyInfo, setCurrencyInfo] = useState({});
   const [totalBalance, setTotalBalance] = useState(0);
+  const [walletData, setWalletData] = useState([]);
 
   async function getCurrencyInfoFromApi() {
     try {
       const data = await getCurrencyInfo();
       setCurrencyInfo(data);
-      const bal = calculateTotalBalance();
-      setTotalBalance(bal);
-      console.log(bal);
     } catch (error) {
       console.error(error);
     } finally {
       setLoading(false);
     }
   }
+
   function calculateTotalBalance() {
     let totalFiatBalance = 0;
     for (let i = 0; i < user.wallets.length; i += 1) {
@@ -44,10 +44,38 @@ const WalletScreen = ({ user }) => {
     }
     return totalFiatBalance;
   }
+
+  async function onRefresh() {
+    setIsRefreshing(true);
+    await getCurrencyInfoFromApi();
+    setIsRefreshing(false);
+  }
   useEffect(() => {
     getCurrencyInfoFromApi();
   }, []);
 
+  useEffect(() => {
+    const balance = calculateTotalBalance();
+    setTotalBalance(balance);
+  }, [currencyInfo]);
+
+  useEffect(() => {
+    const data = [];
+    for (let i = 0; i < user.wallets.length; i += 1) {
+      const currencyName = user.wallets[i].currency.toLowerCase();
+      const currentCurrencyInfo = currencyInfo[currencyName];
+      data.push(
+        {
+          imageSrc: Images.currencies[currencyName],
+          currencyName: user.wallets[i].currency,
+          currencyPrice: currentCurrencyInfo !== undefined ? currentCurrencyInfo.usd : undefined,
+          currencyBalance: user.wallets[i].balance,
+          fiatBalance: '',
+        },
+      );
+    }
+    setWalletData(data);
+  }, [currencyInfo]);
   if (isLoading) {
     return <AppLoading />;
   }
@@ -77,24 +105,19 @@ const WalletScreen = ({ user }) => {
         />
       </View>
       <Divider />
-      <CurrencyListItem
-        imageSrc={canadaLogo}
-        currencyName={user.wallets[0].currency}
-        currencyBalance={user.wallets[0].balance}
-      />
-      <CurrencyListItem
-        imageSrc={bitcoinLogo}
-        currencyName={user.wallets[1].currency}
-        currencyPrice={currencyInfo.bitcoin.usd}
-        currencyBalance={user.wallets[1].balance}
-        fiatBalance={0.1002}
-      />
-      <CurrencyListItem
-        imageSrc={ethereumLogo}
-        currencyName={user.wallets[2].currency}
-        currencyPrice={currencyInfo.ethereum.usd}
-        currencyBalance={user.wallets[2].balance}
-        fiatBalance={1.00}
+      <FlatList
+        keyExtractor={(item) => item.currencyName}
+        data={walletData}
+        onRefresh={() => onRefresh()}
+        refreshing={isRefreshing}
+        renderItem={({ item }) => (
+          <CurrencyListItem
+            imageSrc={item.imageSrc}
+            currencyName={item.currencyName}
+            currencyPrice={item.currencyPrice}
+            currencyBalance={item.currencyBalance}
+          />
+        )}
       />
     </View>
   );
