@@ -3,11 +3,11 @@
 
 import React from 'react';
 import { Text } from 'react-native';
-import TextShantiFont from '../TextShantiFont';
+import TextCustomFont from '../TextCustomFont';
 
 export default function CurrencyListItemSecondaryText(props) {
   return (
-    <TextShantiFont>
+    <TextCustomFont>
       <Text style={{
         fontSize: 18,
         color: 'gray',
@@ -15,6 +15,6 @@ export default function CurrencyListItemSecondaryText(props) {
       >
         {props.children}
       </Text>
-    </TextShantiFont>
+    </TextCustomFont>
   );
 }

@@ -3,7 +3,7 @@
 import React from 'react';
 import { Text } from 'react-native';
 
-export default function TextShantiFont(props) {
+export default function TextCustomFont(props) {
   return (
     <Text style={{ fontFamily: 'Shanti_400Regular' }}>{props.children}</Text>
   );
