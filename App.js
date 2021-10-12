@@ -1,8 +1,9 @@
 import AppLoading from 'expo-app-loading';
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, View, Platform } from 'react-native';
+import {
+  StatusBar, StyleSheet, View,
+} from 'react-native';
 import { useFonts, Shanti_400Regular } from '@expo-google-fonts/shanti';
-import { StatusBar } from 'expo-status-bar';
 import WalletScreen from './screens/WalletScreen';
 import { getUserInfo } from './shared/apis/UserApi';
 
@@ -17,7 +18,6 @@ export default function App() {
     try {
       const data = await getUserInfo(1);
       setUserInfo(data);
-      console.log(data);
     } catch (error) {
       console.error(error);
     } finally {
@@ -46,7 +46,7 @@ export default function App() {
 const styles = StyleSheet.create({
   container: {
     backgroundColor: '#fff',
-    paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
+    marginTop: StatusBar.currentHeight || 0,
   },
   buttonContainer: {
     flexDirection: 'row',
