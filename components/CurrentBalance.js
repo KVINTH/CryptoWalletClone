@@ -5,7 +5,12 @@ import PropType from 'prop-types';
 const CurrentBalance = ({ balance }) => (
   <View style={styles.currentBalanceContainer}>
     <Text style={styles.currencySymbol}>$</Text>
-    <Text style={styles.currentBalance}>{balance}</Text>
+    <Text style={styles.currentBalance}>
+      {balance.toLocaleString('en-US', {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      })}
+    </Text>
   </View>
 );
 
